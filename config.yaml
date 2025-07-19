@@ -1,0 +1,93 @@
+# DB-GPT Configuration File
+
+# LLM Configuration
+llm:
+  provider: "openai"  # openai, local, anthropic
+  model: "gpt-4"  # gpt-4, gpt-3.5-turbo, claude-3, local-model-name
+  api_key: "${OPENAI_API_KEY}"
+  max_tokens: 2048
+  temperature: 0.7
+  timeout: 30
+  
+  # Local LLM settings
+  local:
+    model_path: "${LLM_MODEL_PATH}"
+    device: "auto"  # cpu, cuda, auto
+    context_length: 4096
+
+# Database Configuration
+database:
+  type: "postgresql"  # postgresql, mysql, sqlite, mongodb
+  url: "${DATABASE_URL}"
+  host: "localhost"
+  port: 5432
+  username: "${DB_USERNAME}"
+  password: "${DB_PASSWORD}"
+  database: "db_gpt"
+  
+  # Connection pool settings
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+
+# Vector Store Configuration
+vector_store:
+  provider: "pinecone"  # pinecone, chroma, faiss
+  api_key: "${PINECONE_API_KEY}"
+  environment: "${PINECONE_ENVIRONMENT}"
+  index_name: "db-gpt-tasks"
+  dimension: 1536
+  metric: "cosine"
+
+# Agent Configuration
+agent:
+  max_iterations: 10
+  max_consecutive_auto_reply: 3
+  human_input_mode: "NEVER"  # NEVER, ALWAYS, TERMINATE
+  
+  # Agent roles
+  roles:
+    - name: "analyst"
+      description: "Data analyst for business intelligence"
+      capabilities: ["sql_generation", "data_analysis", "reporting"]
+    
+    - name: "engineer"
+      description: "Database engineer for schema management"
+      capabilities: ["schema_design", "query_optimization", "data_modeling"]
+    
+    - name: "researcher"
+      description: "Research agent for data exploration"
+      capabilities: ["data_exploration", "pattern_recognition", "insights"]
+
+# Task Configuration
+task:
+  max_tasks: 100
+  task_list_file: "task_list.json"
+  result_summary_file: "result_summary.json"
+  
+  # Task priorities
+  priorities:
+    - "CRITICAL"
+    - "HIGH"
+    - "MEDIUM"
+    - "LOW"
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "db_gpt.log"
+  max_size: "10MB"
+  backup_count: 5
+
+# Security Configuration
+security:
+  enable_encryption: false
+  encryption_key: "${ENCRYPTION_KEY}"
+  allowed_hosts: ["localhost", "127.0.0.1"]
+  
+# Performance Configuration
+performance:
+  max_workers: 4
+  cache_enabled: true
+  cache_ttl: 3600  # seconds
+  batch_size: 100 

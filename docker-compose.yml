@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db-gpt:
+    build: .
+    container_name: db-gpt-app
+    environment:
+      - DATABASE_URL=postgresql://db_gpt_user:db_gpt_pass@postgres:5432/db_gpt
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - PINECONE_ENVIRONMENT=${PINECONE_ENVIRONMENT}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+    command: python main.py --objective "Initialize database and run analysis"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: db-gpt-postgres
+    environment:
+      - POSTGRES_DB=db_gpt
+      - POSTGRES_USER=db_gpt_user
+      - POSTGRES_PASSWORD=db_gpt_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: db-gpt-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data: 
